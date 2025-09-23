@@ -1,9 +1,8 @@
 {
-  "rootDirectory": "src",
   "builds": [
-    { "src": "index.html", "use": "@vercel/static" }
+    { "src": "src/index.html", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "/$1" }
+    { "src": "/(.*)", "dest": "/src/$1" }
   ]
 }
