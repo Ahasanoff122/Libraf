@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Store Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- SweetAlert -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100">
+  <div class="container p-4 mx-auto">
+    <h2 class="mb-4 text-2xl font-semibold">Books Admin Panel</h2>
+
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm bg-white dark:bg-gray-700 rounded shadow">
+        <thead class="bg-gray-200 dark:bg-gray-600">
+          <tr class="text-left">
+            <th class="p-3">ID</th>
+            <th class="p-3">Book</th>
+            <th class="p-3">Genre</th>
+            <th class="p-3 text-right">Price</th>
+            <th class="p-3 text-center">Category</th>
+            <th class="p-3 text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+<!-- <script type="module" src="service.js"></script> -->
+
+  <script type="module" src="./src/js/admin.js"></script>
+<script type="module">
+    import { books } from './db/db.js';
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // db.js-dan kitablari yüklə və Firestore-a əlavə et
+
+
+async function importBooks() {
+    for (let book of books) {
+        await addDoc(collection(db, "books"), book);
+    }
+    alert("Bütün kitablar Firestore-a əlavə edildi ✅");
+}
+
+
+  // Admin paneldə bir düymə ilə çağırmaq olar:
+  // <button onclick="importBooks()">Kitabları Import Et</button>
+</script>
+</body>
+
+</html>

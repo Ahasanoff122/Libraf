@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Author Books - LIBRAFF</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #popLayer, #crudPopup, #authModal, #resetModal { display: none; }
+    .translate-x-full { transform: translateX(100%); }
+     .scrollbar-hide::-webkit-scrollbar {
+    display: none; 
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;  
+    scrollbar-width: none;     
+  }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="bg-white p-2 border-b border-gray-200 shadow-sm">
+    <div class="container mx-auto flex justify-between items-center h-16">
+      <a href="#" class="flex items-center p-2">
+        <img class="w-[120px]" src="https://bestsoft.az/uploaded/client/pic_365.png" alt="LIBRAFF Logo" />
+      </a>
+      <div class="flex items-center space-x-4">
+        <div class="relative hidden lg:block w-[400px]">
+          <input type="text" id="searchInputMain" placeholder="Növbəti kitabınızı axtarın" autocomplete="off" class="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-red-600"/>
+        </div>
+        <div class="flex items-center space-x-4 text-gray-600">
+          <div class="relative">
+            <svg id="like-icon" class="w-5 h-5 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+            </svg>
+            <span id="like-count" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center">0</span>
+          </div>
+          <div class="relative">
+            <svg id="cart-icon" class="w-5 h-5 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.183 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            <span id="cart-count" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+    <div class="max-w-[1250px] mx-auto mt-4">
+      <h1 id="authorTitle" class="text-2xl font-bold mb-4"></h1>
+      <!-- <input id="searchInputMain" type="text" placeholder="Kitab axtar" class="border p-2 mb-4 w-full rounded-full focus:outline-none focus:ring-2 focus:ring-red-600"/> -->
+      <div id="booksContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-800 text-white mt-12 p-4 text-center">
+    &copy; 2025 LIBRAFF. All rights reserved.
+  </footer>
+
+  <!-- CART MODAL -->
+  <div id="cart-modal" class="fixed top-0 right-0 w-80 h-full bg-white shadow-2xl transform translate-x-full transition-transform overflow-y-auto z-50 rounded-l-lg border-l border-gray-200">
+    <div class="flex justify-between items-center p-4 border-b border-gray-200 bg-gray-50 sticky top-0 z-10">
+      <h2 class="font-bold text-lg text-gray-800">Səbət</h2>
+      <button id="close-cart" class="text-gray-500 text-2xl hover:text-gray-700 transition">&times;</button>
+    </div>
+    <ul id="cart-list" class="p-4 space-y-4"></ul>
+    <!-- <div class="p-4 border-t border-gray-200 bg-gray-50 sticky bottom-0">
+      <p class="text-sm text-gray-600">Ümumi kitab sayı: <span id="cart-count-bottom" class="font-bold">0</span></p>
+    </div> -->
+  </div>
+
+  <!-- LIKE MODAL -->
+  <div id="like-modal" class="fixed top-0 right-0 w-80 h-full bg-white shadow-2xl transform translate-x-full transition-transform overflow-y-auto z-50 rounded-l-lg border-l border-gray-200">
+    <div class="flex justify-between items-center p-4 border-b border-gray-200 bg-gray-50 sticky top-0 z-10">
+      <h2 class="font-bold text-lg text-gray-800">Liked</h2>
+      <button id="close-like" class="text-gray-500 text-2xl hover:text-gray-700 transition">&times;</button>
+    </div>
+    <ul id="like-list" class="p-4 space-y-4"></ul>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg opacity-0 transition-opacity z-50"></div>
+
+  <!-- SCRIPT -->
+ <script type="module">
+  import booksData from "../../db/db.js"; // import edilmiş data
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const authorName = urlParams.get('author') || 'Nizami';
+  document.getElementById('authorTitle').textContent = `${authorName} Kitabları`;
+
+  let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+  let likedItems = JSON.parse(localStorage.getItem('likedBooks')) || [];
+
+  const booksContainer = document.getElementById('booksContainer');
+  const searchInputMain = document.getElementById('searchInputMain');
+
+  function saveCart() { localStorage.setItem('cart', JSON.stringify(cartItems)); }
+  function saveLiked() { localStorage.setItem('likedBooks', JSON.stringify(likedItems)); }
+
+  function renderBooks(list) {
+    booksContainer.innerHTML = '';
+    list.forEach(book => {
+      const div = document.createElement('div');
+      div.className = 'border p-2 rounded shadow hover:scale-105 transition-transform cursor-pointer';
+      div.innerHTML = `
+        <img src="${book.image}" alt="${book.name}" class="w-full h-48 object-cover mb-2 rounded"/>
+        <h2 class="font-bold text-sm text-3xl pb-2.5">${book.name}</h2>
+        <p class="text-xm text-gray-500 pb-3">${book.author}</p>
+       <div class="price">
+  <span class="text-gray-400 line-through mr-2">${book.list_price}</span>
+  <span class="text-red-500 font-bold">${book.price}₼</span>
+</div>
+        <div class="flex justify-between items-center pt-10">
+          <button class="add-to-cart-btn bg-green-500 text-white px-3 py-1 rounded text-sm">Səbətə əlavə et</button>
+          <div>
+            <button class="like-btn text-red-500 mr-2" title="Like">❤️</button>
+          </div>
+        </div>
+      `;
+      booksContainer.appendChild(div);
+
+      div.querySelector('.add-to-cart-btn').addEventListener('click', () => {
+        if (!cartItems.find(b => b.product_url === book.product_url)) {
+          cartItems.push(book);
+          saveCart();
+          updateCartCount();
+          renderCartModal();
+          showToast(`${book.name} səbətə əlavə olundu!`);
+        } else {
+          showToast('Bu kitab artıq səbətdədir!', 'red');
+        }
+      });
+
+      div.querySelector('.like-btn').addEventListener('click', () => {
+        if (!likedItems.find(b => b.product_url === book.product_url)) {
+          likedItems.push(book);
+          saveLiked();
+          updateLikeCount();
+          renderLikeModal();
+          showToast(`${book.name} bəyənilənlərə əlavə olundu!`);
+        } else {
+          showToast('Bu kitab artıq bəyənilib!', 'red');
+        }
+      });
+    });
+  }
+
+  function updateCartCount() {
+    document.getElementById('cart-count').textContent = cartItems.length;
+    // document.getElementById('cart-count-bottom').textContent = cartItems.length;
+  }
+
+  function updateLikeCount() {
+    document.getElementById('like-count').textContent = likedItems.length;
+  }
+
+  function renderCartModal() {
+    const cartList = document.getElementById('cart-list');
+    cartList.innerHTML = '';
+    cartItems.forEach((item, index) => {
+      const li = document.createElement('li');
+      li.className = 'border p-2 rounded flex space-x-3';
+      li.innerHTML = `
+        <img src="${item.image}" alt="${item.name}" class="w-20 h-28 object-cover rounded-lg">
+        <div class="flex-1 flex flex-col justify-between">
+          <div>
+            <h2 class="font-bold text-gray-800 text-sm">${item.name}</h2>
+            <p class="text-gray-500 text-xs">${item.author || ''}</p>
+            <div class="price">
+  <span class="text-gray-400 line-through mr-2">${item.list_price}</span>
+  <span class="text-red-500 font-bold">${item.price}₼</span>
+</div>
+          </div>
+          <div class="mt-2 flex items-center justify-between">
+            <a href="${item.product_url}" target="_blank" class="text-blue-500 text-xs hover:underline">ails</a>
+            <button class="remove-btn text-red-500 text-xs px-2 py-1 rounded border border-red-500 hover:bg-red-500 hover:text-white transition">Sil</button>
+          </div>
+        </div>
+      `;
+      cartList.appendChild(li);
+      li.querySelector('.remove-btn').addEventListener('click', () => {
+        cartItems.splice(index, 1);
+        saveCart();
+        updateCartCount();
+        renderCartModal();
+      });
+    });
+  }
+
+  function renderLikeModal() {
+    const likeList = document.getElementById('like-list');
+    likeList.innerHTML = '';
+    likedItems.forEach((item, index) => {
+      const li = document.createElement('li');
+      li.className = 'border p-2 rounded flex space-x-3';
+      li.innerHTML = `
+        <img src="${item.image}" alt="${item.name}" class="w-20 h-28 object-cover rounded-lg">
+        <div class="flex-1 flex flex-col justify-between">
+          <div>
+            <h2 class="font-bold text-gray-800 text-sm">${item.name}</h2>
+            <p class="text-gray-500 text-xs">${item.author || ''}</p>
+            <a href="${item.product_url}" target="_blank" class="text-blue-500 text-xs hover:underline">View Details</a>
+                    <div class="price">
+  <span class="text-gray-400 line-through mr-2">${item.list_price}</span>
+          <div class="price">
+  <span class="text-gray-400 line-through mr-2">${item.list_price}</span>
+  <span class="text-red-500 font-bold">${item.price}₼</span>
+</div>
+</div>
+          </div>
+          <div class="mt-2 flex items-center justify-between">
+            <button class="add-cart-btn bg-green-500 text-white px-3 py-1 rounded text-xs">Səbətə əlavə et</button>
+            <button class="remove-like-btn text-red-500 text-xs px-2 py-1 rounded border border-red-500 hover:bg-red-500 hover:text-white transition">Sil</button>
+          </div>
+        </div>
+      `;
+      likeList.appendChild(li);
+
+      li.querySelector('.add-cart-btn').addEventListener('click', () => {
+        if (!cartItems.find(b => b.product_url === item.product_url)) {
+          cartItems.push(item);
+          saveCart();
+          updateCartCount();
+          renderCartModal();
+          showToast(`${item.name} səbətə əlavə olundu!`);
+        } else {
+          showToast('Bu kitab artıq səbətdədir!', 'red');
+        }
+      });
+
+      li.querySelector('.remove-like-btn').addEventListener('click', () => {
+        likedItems.splice(index, 1);
+        saveLiked();
+        updateLikeCount();
+        renderLikeModal();
+      });
+    });
+  }
+
+  function showToast(message, bgColor='green') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `fixed bottom-4 right-4 bg-${bgColor}-500 text-white px-4 py-2 rounded shadow-lg opacity-100 transition-opacity z-50`;
+    setTimeout(() => {
+      toast.className = `fixed bottom-4 right-4 bg-${bgColor}-500 text-white px-4 py-2 rounded shadow-lg opacity-0 transition-opacity z-50`;
+    }, 1500);
+  }
+
+  // Search
+  searchInputMain.addEventListener('input', () => {
+    const query = searchInputMain.value.toLowerCase();
+    renderBooks(booksData.filter(b => b.author === authorName && b.name.toLowerCase().includes(query)));
+  });
+
+  // Modal toggles
+  const cartIcon = document.getElementById('cart-icon');
+  const closeCartBtn = document.getElementById('close-cart');
+  const cartModal = document.getElementById('cart-modal');
+  cartIcon.addEventListener('click', () => cartModal.classList.remove('translate-x-full'));
+  closeCartBtn.addEventListener('click', () => cartModal.classList.add('translate-x-full'));
+
+  const likeIcon = document.getElementById('like-icon');
+  const closeLikeBtn = document.getElementById('close-like');
+  const likeModal = document.getElementById('like-modal');
+  likeIcon.addEventListener('click', () => likeModal.classList.remove('translate-x-full'));
+  closeLikeBtn.addEventListener('click', () => likeModal.classList.add('translate-x-full'));
+
+  // Initial render
+  renderBooks(booksData.filter(b => b.author === authorName));
+  updateCartCount();
+  updateLikeCount();
+  renderCartModal();
+  renderLikeModal();
+</script>
+<script type="module" src="../js/search.js"></script>
+</body>
+</html>

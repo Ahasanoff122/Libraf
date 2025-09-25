@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="az">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kataloq</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+         .scrollbar-hide::-webkit-scrollbar {
+    display: none; 
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;  
+    scrollbar-width: none;     
+  }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <!-- Header -->
+    <header class="bg-white p-2 border-b border-gray-200 shadow-sm">
+        <div class="container mx-auto flex justify-between items-center h-16">
+            <a href="#" class="flex items-center p-2">
+                <img class="w-[120px]" src="https://bestsoft.az/uploaded/client/pic_365.png" alt="LIBRAFF Logo" />
+            </a>
+            <div class="flex items-center space-x-4">
+                <div class="relative hidden lg:block w-[400px]">
+                    <input type="text" id="searchInputMain" placeholder="Növbəti kitabınızı axtarın" autocomplete="off"
+                        class="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-red-600" />
+                </div>
+                <div class="flex items-center space-x-4 text-gray-600">
+                    <div class="relative">
+                        <svg id="like-icon" class="w-5 h-5 cursor-pointer" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                            </path>
+                        </svg>
+                        <span id="like-count"
+                            class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center">0</span>
+                    </div>
+                    <div class="relative">
+                        <svg id="cart-icon" class="w-5 h-5 cursor-pointer" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.183 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                            </path>
+                        </svg>
+                        <span id="cart-count"
+                            class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex mt-4 px-4 gap-6">
+        <!-- Sidebar kataloq -->
+        <aside class="w-64 bg-white p-4 rounded shadow" id="catalog-sidebar">
+            <h2 class="font-bold mb-2">Janrlar</h2>
+        </aside>
+
+        <!-- Kitablar konteyneri -->
+        <main class="flex-1 grid grid-cols-4 gap-4" id="booksContainer">
+            <!-- Kitab kartları JS ilə buraya gələcək -->
+        </main>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal"
+        class="fixed top-0 right-0 w-96 h-full bg-white shadow-lg p-4 transform translate-x-full transition-transform z-50 overflow-y-auto scrollbar-hide">
+        <button id="close-cart" class="mb-4">Bağla</button>
+        <ul id="cart-list" class="space-y-2"></ul>
+    </div>
+
+    <!-- Like Modal -->
+    <div id="like-modal"
+        class="fixed top-0 right-0 w-96 h-full bg-white shadow-lg p-4 transform translate-x-full transition-transform z-50 overflow-y-auto scrollbar-hide">
+        <button id="close-like" class="mb-4">Bağla</button>
+        <ul id="like-list" class="space-y-2"></ul>
+    </div>
+    <footer class="bg-gray-50 py-10 px-4 md:px-8 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h3 class="font-bold mb-4 text-lg text-gray-800">Hesabım</h3>
+                <ul class="space-y-2 text-gray-600">
+                    <li>
+                        <a href="#" class="hover:text-blue-600 transition-colors">Daxil ol</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-blue-600 transition-colors">Qeydiyyatdan keç</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold mb-4 text-lg text-gray-800">Şirkət</h3>
+                <ul class="space-y-2 text-gray-600">
+                    <li>
+                        <a href="#" class="hover:text-blue-600 transition-colors">Haqqımızda</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-blue-600 transition-colors">Əlaqə</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-blue-600 transition-colors">Vakansiyalar</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-blue-600 transition-colors">Sayt Xəritəsi</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold mb-4 text-lg text-gray-800">Müştəri Xidməti</h3>
+                <ul class="space-y-2 text-gray-600">
+                    <li>
+                        <a href="#" class="hover:text-blue-600 transition-colors">Dəyişdirilmə və qaytarılma</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-blue-600 transition-colors">Ödəniş və çatdırılma</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-blue-600 transition-colors">Sifarişiniz haqqında</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-blue-600 transition-colors">Seçilmişlər</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold mb-4 text-lg text-gray-800">Əlaqə</h3>
+                <div class="space-y-2 text-gray-600">
+                    <p>Bakı, Badamdar qəs., Mikayıl Müşfiq küç., 1c</p>
+                    <p>(Badamdar Estates)</p>
+                    <p>+994-50-290-44-96</p>
+                    <p>B.e - B. 9:00 - 18:00</p>
+                    <p>
+                        <a href="mailto:online@ultraff.az" class="hover:underline">online@ultraff.az</a>
+                    </p>
+                    <p><a href="#" class="hover:underline">Xəritədə bax</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script type="module" defer src="../js/catalog.js"></script>
+    <script type="module" src="../js/search.js"></script>
+    <script>
+        // ---------- SEARCH ----------
+const searchInput = document.getElementById("searchInputMain");
+
+searchInput.addEventListener("input", () => {
+    const query = searchInput.value.toLowerCase().trim();
+
+    // URL query-dən category al
+    const params = new URLSearchParams(window.location.search);
+    const categoryFromURL = params.get('category');
+
+    const filteredBooks = booksData.filter(book => 
+        (categoryFromURL ? book.category === categoryFromURL : true) &&
+        (book.name.toLowerCase().includes(query) || 
+         (book.author && book.author.toLowerCase().includes(query)))
+    );
+
+    renderBooks(filteredBooks);
+});
+
+    </script>
+</body>
+
+</html>

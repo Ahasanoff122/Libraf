@@ -1,0 +1,34 @@
+# Netlify configuration for SPA routing and static assets
+[[redirects]]
+  from = "/src/pages/*"
+  to = "/src/pages/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/src/js/*"
+  to = "/src/js/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/src/css/*"
+  to = "/src/css/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/src/middleware/*"
+  to = "/src/middleware/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/src/middle/*"
+  to = "/src/middle/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/db/*"
+  to = "/db/:splat"
+  status = 200
+
+[build]
+  publish = "src/pages"
+  command = ""
