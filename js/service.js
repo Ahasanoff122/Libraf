@@ -1,5 +1,5 @@
 // service.js
-import booksData from "../../db/db.js"  
+import booksData from "../db/db.js"  
 
 // Bütün kitabları al
 export async function getAllBooks() {

@@ -1,4 +1,4 @@
-import booksData from '../../db/db.js';
+import booksData from '../db/db.js';
 
 
 let currentIndex = 0;

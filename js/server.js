@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const dbPath = path.join('../../db/db.js');
+const dbPath = path.join('../db/db.js');
 
 // GET all books
 app.get('/books', (req, res) => {

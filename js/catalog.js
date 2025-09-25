@@ -1,4 +1,4 @@
-import booksData from '../../db/db.js'; // db.js-də kitab array-i
+import booksData from '../db/db.js'; // db.js-də kitab array-i
 import categoryData from './data.js';
 
 const catalogSidebar = document.getElementById('catalog-sidebar');

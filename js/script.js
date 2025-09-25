@@ -1,4 +1,4 @@
-import booksData from "../../db/db.js"  
+import booksData from "../db/db.js"  
 // DOM elementi
 const booksContainer = document.getElementById("books");
 

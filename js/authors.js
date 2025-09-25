@@ -1,4 +1,4 @@
-import books from "../../db/db.js"; 
+import books from "../db/db.js"; 
 
 
 const authorsList = document.getElementById("authorsList");
